@@ -1,4 +1,4 @@
-from tweepy import Stream
+import tweepy
 import logging
 from config import create_api
 import json
@@ -6,7 +6,7 @@ import json
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-class FavRetweetListener(Stream):
+class FavRetweetListener(tweepy.StreamListener):
     def _init_(self, api):
         self.api = api
         self.me = api.me()
@@ -31,27 +31,9 @@ class FavRetweetListener(Stream):
 
 def main(keywords):
     api = create_api()
-    stream = FavRetweetListener(api, api.auth)
-    # tweets_listener = FavRetweetListener(api)
-    # stream = tweepy.Stream(api.auth, tweets_listener)
+    tweets_listener = FavRetweetListener(api)
+    stream = tweepy.Stream(api.auth, tweets_listener)
     stream.filter(track=keywords, languages=["en"])
 
 if __name__ == "__main__":
     main(["Programming", "MMTVC"])
-
-# class MyStreamListener(Stream):
-#     def on_status(self, status):
-#         print(status.text)
-
-#     def on_error(self, status_code):
-#         if status_code == 420:
-#             return False
-
-#     stream = MyStreamListener(
-#     consumer_key,
-#     consumer_secret,
-#     access_token,
-#     access_token_secret=
-# )
-
-# stream.filter(track=["Programming"], languages=["en"])
